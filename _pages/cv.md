@@ -16,9 +16,9 @@ Education
 
 Work experience
 ======
-* Feb 2022 – Aug 2022 
-  * Amazon 
+* Amazon
   * Software Development Engineering Intern
+  * Feb 2022 – Aug 2022
   
 Skills
 ======
