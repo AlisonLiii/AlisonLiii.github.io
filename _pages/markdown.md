@@ -1,6 +1,6 @@
 ---
 permalink: /markdown/
-title: "Fun things about me.."
+title: "Fun things about me"
 author_profile: true
 redirect_from: 
   - /md/
@@ -8,4 +8,4 @@ redirect_from:
 ---
 
 1. I lived in Scotland for several years, but it was such a pity that I did not pick up any Scottish accent :(
-2. HMart is my go-to grocery spot.
+2. Autumn used to be my favourite season, but now I would definitely pick summer!

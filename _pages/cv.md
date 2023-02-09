@@ -11,49 +11,20 @@ redirect_from:
 
 Education
 ======
-* B.S. in GitHub, GitHub University, 2012
-* M.S. in Jekyll, GitHub University, 2014
-* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
+* MSE in Computer and Information Sciences, University of Pennsylvania, GPA: 4.0/4.0
+* BSc (First Class Honour) in Computer Science, University of Edinburgh, GPA: 3.8/4.0
 
 Work experience
 ======
-* Summer 2015: Research Assistant
-  * Github University
-  * Duties included: Tagging issues
-  * Supervisor: Professor Git
-
-* Fall 2015: Research Assistant
-  * Github University
-  * Duties included: Merging pull requests
-  * Supervisor: Professor Hub
+* Feb 2022 – Aug 2022 
+  * Amazon 
+  * Software Development Engineering Intern
   
 Skills
 ======
-* Skill 1
-* Skill 2
-  * Sub-skill 2.1
-  * Sub-skill 2.2
-  * Sub-skill 2.3
-* Skill 3
-
-Publications
-======
-  <ul>{% for post in site.publications %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Talks
-======
-  <ul>{% for post in site.talks %}
-    {% include archive-single-talk-cv.html %}
-  {% endfor %}</ul>
-  
-Teaching
-======
-  <ul>{% for post in site.teaching %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Service and leadership
-======
-* Currently signed in to 43 different slack teams
+* Programming Languages
+  * Python, TypeScript, JavaScript, HTML, CSS, Java, SQL, C++, C, Kotlin, XML 
+* Framework and Tools
+  * React, Apache Spark, Apache Storm, MongoDB, Linux, Git, CI/CD, Agile, NoSQL, Android Studio, Docker, message queue, serverless computing, REST API
+* Web Service: 
+  * AWS S3, AWS EC2, Google Firebase, AWS QuickSight, AWS RedShift, AWS Athena, AWS Kinesis
