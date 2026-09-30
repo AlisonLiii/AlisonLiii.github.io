@@ -1,0 +1,525 @@
+<title>Alice's Wonderland</title>
+<style id="blog-style">
+/* Layout: airy storybook. Soft watercolor-light hero with a few pastel cards drifting, then posts as numbered chapters in one calm reading column (~680px). */
+:root{
+  --bg:#F6FAF8; --paper:#FFFFFF; --ink:#2E3B40; --muted:#7B8B90; --line:#E2ECE8;
+  --rose:#C45877; --rose-soft:#FBE8EE; --mint:#BFE3D5; --sky:#C9E2F2; --blush:#F7D6DF; --leaf:#5E9C86;
+  --f-display:"Cormorant Garamond","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --f-story:"Noto Serif SC","Songti SC","STSong",serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#131A1C; --paper:#1A2326; --ink:#E4EEEB; --muted:#94A6A6; --line:#26333A;
+  --rose:#F29AB2; --rose-soft:#3A2530; --mint:#23433A; --sky:#1F3645; --blush:#43293A; --leaf:#8FD0B6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131A1C; --paper:#1A2326; --ink:#E4EEEB; --muted:#94A6A6; --line:#26333A;
+  --rose:#F29AB2; --rose-soft:#3A2530; --mint:#23433A; --sky:#1F3645; --blush:#43293A; --leaf:#8FD0B6; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-weight:400;font-size:16.5px;line-height:1.9;margin:0;padding-inline:20px;-webkit-font-smoothing:antialiased}
+a{color:var(--rose);text-underline-offset:3px;text-decoration-thickness:1px}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--rose);outline-offset:2px;border-radius:6px}
+.wrap{max-width:680px;margin:0 auto;padding-block:22px 72px}
+.checker{height:1px;background:var(--line)}
+
+/* masthead */
+.mast{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;padding-bottom:14px}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-style:italic;font-weight:500;font-size:23px;color:var(--ink);text-decoration:none}
+.watch{width:24px;height:28px;flex:none}
+.watch .case{fill:var(--mint)}.watch .face{fill:var(--paper)}.watch .hand{stroke:var(--rose);stroke-width:1.6;stroke-linecap:round}
+.watch .tick{stroke:var(--line);stroke-width:1}
+.nav{display:flex;flex-wrap:wrap;gap:4px 20px;align-items:center;font-size:14.5px}
+.nav a{color:var(--muted);text-decoration:none}
+.nav a[aria-current="page"],.nav a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:4px 16px;font-size:14.5px;cursor:pointer;line-height:1.6}
+.btn:hover{border-color:var(--rose);color:var(--rose)}
+.btn.primary{background:var(--rose);border-color:var(--rose);color:var(--paper)}
+.btn.primary:hover{color:var(--paper);filter:brightness(1.05)}
+.btn.danger{color:var(--rose)}
+.btn:disabled{opacity:.5;cursor:default}
+
+/* hero */
+.hero{position:relative;overflow:hidden;margin-top:18px;padding:54px 28px 46px;border-radius:24px;background:
+  radial-gradient(60% 80% at 12% 20%, var(--mint) 0, transparent 70%),
+  radial-gradient(50% 70% at 88% 30%, var(--blush) 0, transparent 70%),
+  radial-gradient(60% 70% at 60% 110%, var(--sky) 0, transparent 70%),
+  var(--paper)}
+.hero h1{font-family:var(--f-display);font-style:italic;font-weight:500;font-size:clamp(44px,10vw,78px);line-height:1;margin:0;letter-spacing:-.01em;position:relative;z-index:1}
+.hero h1 .apos{color:var(--rose)}
+.hero .quote{font-family:var(--f-display);font-style:italic;color:var(--leaf);font-size:20px;margin:16px 0 4px;position:relative;z-index:1}
+.hero p.tag{margin:0;color:var(--muted);max-width:30em;position:relative;z-index:1;font-size:15.5px}
+.fall{position:absolute;inset:0;pointer-events:none;z-index:0}
+.card{position:absolute;width:26px;height:36px;border-radius:5px;background:var(--paper);box-shadow:0 3px 10px rgba(46,59,64,.08);display:grid;place-items:center;font-size:13px;line-height:1;color:var(--leaf);opacity:.85}
+.card.r{color:var(--rose)}
+@media (prefers-reduced-motion:no-preference){
+  .card{animation:drift var(--d,14s) ease-in-out var(--delay,0s) infinite}
+  @keyframes drift{0%,100%{transform:translateY(0) rotate(var(--r0,0deg))}50%{transform:translateY(22px) translateX(var(--dx,10px)) rotate(calc(var(--r0,0deg) + 25deg))}}
+}
+
+/* chapter list */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}
+.pill{font-size:13.5px;border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:2px 14px;cursor:pointer;color:var(--muted)}
+.pill[aria-pressed="true"]{background:var(--rose-soft);border-color:transparent;color:var(--rose)}
+.pill .s{margin-right:4px}
+.chapters{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:14px}
+.chapters li{padding:22px 24px;background:var(--paper);border-radius:18px;display:grid;grid-template-columns:1fr auto;gap:0 20px;align-items:center;transition:transform .2s}
+.chapters .txt{display:grid;gap:4px;min-width:0}
+.thumb{width:108px;height:108px;border-radius:14px;object-fit:cover;display:block}
+@media (max-width:520px){.thumb{width:76px;height:76px}.chapters li{padding:18px;gap:0 14px}}
+.chapters li:hover{transform:translateY(-2px)}
+.num{font-family:var(--f-display);font-style:italic;color:var(--leaf);font-size:17px}
+.chapters a.t{font-size:20px;font-weight:500;color:var(--ink);text-decoration:none;line-height:1.55;text-wrap:balance}
+.chapters a.t:hover{color:var(--rose)}
+.chapters p{font-family:var(--f-story);margin:2px 0 0;color:var(--muted);font-size:14.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.meta{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:6px}
+.meta time{font-variant-numeric:tabular-nums}
+.suit{color:var(--leaf)}.suit.r{color:var(--rose)}
+.empty{padding:40px 0;color:var(--muted)}
+.drafts{margin-top:24px;padding:12px 16px;background:var(--rose-soft);border-radius:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px}
+.drafts .lbl{color:var(--rose)}
+
+/* article */
+.post-head{padding-block:40px 20px}
+.post-head h1{font-size:clamp(26px,5vw,36px);line-height:1.45;margin:6px 0 12px;font-weight:500;text-wrap:balance}
+.back{font-size:14px;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--rose)}
+.prose{overflow-wrap:anywhere;font-family:var(--f-story);font-size:17.5px;line-height:2;padding-top:24px}
+.prose img{display:block;width:100%;border-radius:14px;margin:.4em 0}
+.prose p:has(> img:only-child){margin-bottom:1.4em}
+.prose img + em,.prose p > img + br + em{display:block;text-align:center;font-size:14px;color:var(--muted)}
+.prose>p:first-of-type::first-letter{float:left;font-size:2.8em;line-height:1;padding:.08em .14em 0 0;color:var(--rose);font-weight:500}
+.prose h2,.prose h3{line-height:1.5;margin:1.9em 0 .5em;font-weight:500;text-wrap:balance}
+.prose h2{font-size:22px}.prose h3{font-size:19px}
+.prose h2::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--mint);margin-right:10px;vertical-align:middle;box-shadow:0 0 0 3px var(--paper),0 0 0 4px var(--mint)}
+.prose p,.prose ul,.prose ol,.prose blockquote,.prose pre,.prose table{margin:0 0 1.1em}
+.prose blockquote{background:var(--paper);border-radius:12px;padding:12px 18px;color:var(--muted);margin-left:0;border-left:3px solid var(--mint)}
+.prose code{font-family:var(--f-mono);font-size:.82em;background:var(--rose-soft);padding:1px 6px;border-radius:5px}
+.prose pre{background:var(--paper);border-radius:12px;padding:14px 18px;overflow-x:auto;line-height:1.6}
+.prose pre code{background:none;padding:0}
+.prose table{border-collapse:collapse;display:block;overflow-x:auto;font-size:15px}
+.prose th,.prose td{border:1px solid var(--line);padding:6px 10px;text-align:left}
+.prose hr{border:0;text-align:center;margin:2.2em 0;height:auto}
+.prose hr::after{content:"♠  ♥  ♣  ♦";color:var(--mint);letter-spacing:.4em}
+.post-foot{margin-top:40px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.fin{font-family:var(--f-display);font-style:italic;color:var(--muted);text-align:center;margin-top:36px;font-size:19px}
+
+/* editor */
+.editor{padding-block:30px 0;display:grid;gap:14px}
+.editor input[type=text],.editor textarea{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.editor #ed-title{font-size:23px;font-weight:500}
+.editor textarea{min-height:420px;font-family:var(--f-story);font-size:16px;line-height:1.9;resize:vertical}
+.editor .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.editor .row .spacer{flex:1}
+.label{font-size:14px;color:var(--muted)}
+.hint{font-size:13px;color:var(--muted)}
+.tabs{display:flex;gap:4px}
+.tabs button{border:0;background:none;padding:2px 14px;border-radius:999px;cursor:pointer;color:var(--muted);font-size:14.5px}
+.tabs button[aria-selected="true"]{background:var(--rose-soft);color:var(--rose)}
+.preview{background:var(--paper);border-radius:12px;padding:4px 22px 18px;min-height:420px}
+.photo-in{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.gh-panel{margin-top:32px;background:var(--paper);border-radius:18px;padding:24px;display:grid;gap:12px}
+.gh-panel ol{margin:0;padding-left:1.3em;font-size:14.5px;color:var(--muted)}
+.gh-panel input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.gh-panel details{font-size:14px;color:var(--muted)}
+.gh-panel .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:8px}
+.foot-link{background:none;border:0;padding:0;color:var(--muted);font-size:13px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.confirm{display:flex;gap:8px;align-items:center;font-size:14px;flex-wrap:wrap}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:8px 18px;border-radius:999px;font-size:14px;max-width:calc(100% - 32px)}
+.site-foot{margin-top:56px;padding-top:18px;font-size:13.5px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.site-foot em{font-family:var(--f-display);font-size:1.1em}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Noto+Sans+SC:wght@400;500&family=Noto+Serif+SC:wght@400;500;600&family=JetBrains+Mono&display=swap">
+<div id="app" class="wrap"></div>
+<div id="toast" class="toast" role="status" hidden></div>
+<script type="application/json" id="blog-data">{"site": {"name": "Alice's Wonderland", "tagline": "掉进兔子洞之后，把遇见的人、走过的路、心里那些小小的故事，一篇一篇写下来。", "about": "你好，欢迎来到我的兔子洞。\n\n这里没有什么大道理，只有生活：一顿好吃的饭，一段走了很久的路，一个忽然想起来的人，一些当时没说出口的话。\n\n写下来，是为了以后的自己还能找到回来的路。\n\n> 这段是示例文字。点下面的「编辑关于」换成你自己的介绍。"}, "images": {}, "posts": [{"id": "hello", "title": "写在兔子洞门口（示例）", "date": "2026-09-29", "tags": ["日常"], "body": "这是一篇**示例文章**，读完就可以删掉它。\n\n有些事情当时觉得很普通，过了很久才发现，那一天其实很重要。所以我想把它们记下来：路边忽然开的花，深夜和朋友的一通电话，一个人去看海的那个下午。\n\n## 怎么写一篇新的\n\n点右上角的 **写文章**，写下标题、日期和几个标签（比如「旅行」「日常」「朋友」）。每一篇会按时间顺序编成一个章节，第一篇是 Chapter I。\n\n## 放照片\n\n在编辑页点 **插入照片**，从电脑或手机里选一张，它会自动压缩后放进文章里。文章里的第一张照片会出现在首页的列表上。\n\n## 发布和草稿\n\n点 **发布**，所有打开链接的人都能读到。还没写完就点 **存草稿**，草稿只存在你自己的浏览器里，不会公开。\n\n---\n\n> “Begin at the beginning,” the King said gravely, “and go on till you come to the end: then stop.”"}]}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script id="blog-app">
+(function(){
+  const SKEL_HEAD = '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>\n';
+  const SKEL_TAIL = '\n\n</body></html>';
+  const CDN = '<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"><\/script>\n<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"><\/script>';
+
+  const state = JSON.parse(document.getElementById('blog-data').textContent);
+  const ui = { tag:null, canWrite:false, artifact:null, downloads:null, editing:null, preview:false, confirmDel:false, busy:false, editAbout:false, mode:null, gh:null };
+  const app = document.getElementById('app');
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const imgMap = () => Object.assign({}, state.images||{}, ui.editing ? ui.editing.images||{} : {});
+  const withImgs = s => (s||'').replace(/\(img:([a-z0-9]+)\)/g, (m,k)=> { const u=imgMap()[k]; return u ? '('+u+')' : '()'; });
+  const firstImg = s => { const m=/!\[[^\]]*\]\(img:([a-z0-9]+)\)/.exec(s||''); return m ? imgMap()[m[1]] : null; };
+  const md = s => {
+    s = withImgs(s);
+    if (window.marked && window.DOMPurify) return DOMPurify.sanitize(marked.parse(s||''));
+    return (s||'').split(/\n{2,}/).map(b=>{
+      let t=esc(b.trim()); if(!t) return '';
+      t=t.replace(/!\[([^\]]*)\]\((data:image\/[a-z]+;base64,[A-Za-z0-9+\/=]+)\)/g,'<img alt="$1" src="$2">')
+         .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>');
+      if (/^#{2,3} /.test(t)) return '<h2>'+t.replace(/^#+ /,'')+'</h2>';
+      if (/^---$/.test(t)) return '<hr>';
+      if (/^&gt; /.test(t)) return '<blockquote><p>'+t.replace(/^&gt; /,'')+'</p></blockquote>';
+      return '<p>'+t.replace(/\n/g,'<br>')+'</p>';
+    }).join('');
+  };
+  const plain = s => (s||'').replace(/!\[[^\]]*\]\([^)]*\)/g,' ').replace(/```[\s\S]*?```/g,' ').replace(/[#>*_`\[\]()!-]/g,'').replace(/\s+/g,' ').trim();
+  const readMin = s => Math.max(1, Math.round((s||'').length / 450));
+  const sorted = () => state.posts.slice().sort((a,b)=> b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+  const today = () => { const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+  const roman = n => { const m=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']]; let r=''; for(const [v,s] of m) while(n>=v){r+=s;n-=v;} return r; };
+  const chapterNo = id => { const asc = sorted().reverse(); return asc.findIndex(p=>p.id===id)+1; };
+  const SUITS = ['♠','♥','♣','♦'];
+  const suitOf = t => { let h=0; for (const c of t) h=(h*31+c.charCodeAt(0))>>>0; return SUITS[h%4]; };
+  const suitHtml = t => { const s=suitOf(t); return `<span class="suit ${s==='♥'||s==='♦'?'r':''}">${s}</span>`; };
+  const fmtDate = d => { const [y,m,dd]=d.split('-'); const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return `${+dd} ${M[+m-1]||''} ${y}`; };
+
+  function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>t.hidden=true,2600); }
+  function route(){ return location.hash.slice(1) || 'home'; }
+
+  function watchSvg(){
+    let ticks=''; for(let i=0;i<12;i++){ const a=i*Math.PI/6; ticks+=`<line class="tick" x1="${15+Math.sin(a)*9}" y1="${20-Math.cos(a)*9}" x2="${15+Math.sin(a)*10.5}" y2="${20-Math.cos(a)*10.5}"/>`; }
+    return `<svg class="watch" viewBox="0 0 30 34" aria-hidden="true"><circle class="case" cx="15" cy="3.5" r="2.6"/><rect class="case" x="13.4" y="5" width="3.2" height="3" rx="1"/><circle class="case" cx="15" cy="20" r="13.5"/><circle class="face" cx="15" cy="20" r="11.5"/>${ticks}<line class="hand" id="hh" x1="15" y1="20" x2="15" y2="14"/><line class="hand" id="mh" x1="15" y1="20" x2="15" y2="11"/></svg>`;
+  }
+  function tickWatch(){
+    const d=new Date(), h=document.getElementById('hh'), m=document.getElementById('mh'); if(!h||!m) return;
+    h.setAttribute('transform',`rotate(${(d.getHours()%12)*30+d.getMinutes()/2} 15 20)`);
+    m.setAttribute('transform',`rotate(${d.getMinutes()*6} 15 20)`);
+  }
+  setInterval(tickWatch, 20000);
+
+  function mast(cur){
+    return `<header class="mast">
+      <a class="brand" href="#home" title="I'm late! I'm late!">${watchSvg()}<span>${esc(state.site.name)}</span></a>
+      <nav class="nav" aria-label="主导航">
+        <a href="#home" ${cur==='home'?'aria-current="page"':''}>Chapters</a>
+        <a href="#about" ${cur==='about'?'aria-current="page"':''}>About</a>
+        ${ui.canWrite ? `<button class="btn primary drink" data-act="new">写文章</button>` : ''}
+      </nav></header>`;
+  }
+
+  function fallingCards(){
+    const spec=[['♥',68,-14,9,0],['♣',80,18,12,-4],['♦',90,-8,11,-7],['♠',74,26,14,-2]];
+    return `<div class="fall" aria-hidden="true">${spec.map(([s,l,r,d,dl],i)=>`<span class="card ${s==='♥'||s==='♦'?'r':''}" style="left:${l}%;top:${[14,58,22,78][i]}%;--r0:${r}deg;--d:${d}s;--delay:${dl}s;--dx:${i%2?-14:14}px">${s}</span>`).join('')}</div>`;
+  }
+
+  function heroTitle(name){
+    const i = name.indexOf("'");
+    return i>0 ? esc(name.slice(0,i)) + '<span class="apos">’</span>' + esc(name.slice(i+1)) : esc(name);
+  }
+
+  function home(){
+    const all = sorted();
+    const tags = [...new Set(all.flatMap(p=>p.tags||[]))];
+    const list = ui.tag ? all.filter(p=>(p.tags||[]).includes(ui.tag)) : all;
+    const drafts = ui.canWrite ? loadDrafts() : [];
+    return mast('home') + `
+      <section class="hero">${fallingCards()}
+        <h1>${heroTitle(state.site.name)}</h1>
+        <p class="quote">“Curiouser and curiouser!”</p>
+        <p class="tag">${esc(state.site.tagline)}</p>
+      </section>
+      ${drafts.length ? `<div class="drafts"><span class="lbl">Drafts · 仅你可见</span>${drafts.map(d=>`<button class="pill" data-act="draft" data-id="${esc(d.key)}">${esc(d.title||'无标题')}</button>`).join('')}</div>`:''}
+      ${tags.length>1 ? `<div class="filters" role="group" aria-label="按标签筛选">
+        <button class="pill" data-act="tag" data-tag="" aria-pressed="${!ui.tag}">全部</button>
+        ${tags.map(t=>`<button class="pill" data-act="tag" data-tag="${esc(t)}" aria-pressed="${ui.tag===t}"><span class="s">${suitOf(t)}</span>${esc(t)}</button>`).join('')}</div>`:''}
+      ${list.length ? `<ol class="chapters">${list.map(p=>{ const im=firstImg(p.body); return `<li><div class="txt">
+          <span class="num">Chapter ${roman(chapterNo(p.id))}</span>
+          <a class="t" href="#p-${esc(p.id)}">${esc(p.title)}</a>
+          <p>${esc(plain(p.body).slice(0,140))}</p>
+          <div class="meta"><time datetime="${p.date}">${fmtDate(p.date)}</time><span>${readMin(p.body)} 分钟</span>${(p.tags||[]).map(t=>`<span>${suitHtml(t)} ${esc(t)}</span>`).join('')}</div>
+        </div>${im?`<img class="thumb" src="${im}" alt="">`:''}</li>`}).join('')}</ol>`
+        : `<p class="empty">${ui.canWrite ? '兔子洞还空着。点右上角「写文章」写下第一章。' : 'The rabbit hole is still empty. 过段时间再来看看。'}</p>`}
+      ${foot()}`;
+  }
+
+  function foot(){
+    return `<div class="checker" aria-hidden="true" style="margin-top:56px"></div><footer class="site-foot" style="margin-top:0"><span>© ${new Date().getFullYear()} <em>${esc(state.site.name)}</em></span>
+      ${ui.canWrite && ui.downloads ? `<button class="btn" data-act="export">导出网站文件</button>`:''}
+      ${ui.mode==='gh' ? (ui.canWrite ? `<button class="foot-link" data-act="gh-logout">退出作者登录</button>` : `<a class="foot-link" href="#admin">作者登录</a>`) : ''}</footer>`;
+  }
+
+  function article(id){
+    const p = state.posts.find(x=>x.id===id);
+    if (!p) return mast('') + `<p class="empty">这一章好像被柴郡猫藏起来了。<a href="#home">回到目录</a></p>`;
+    return mast('') + `<article>
+      <header class="post-head"><a class="back" href="#home">← All chapters</a>
+        <div class="num" style="margin-top:18px">Chapter ${roman(chapterNo(p.id))}</div>
+        <h1>${esc(p.title)}</h1>
+        <div class="meta"><time datetime="${p.date}">${fmtDate(p.date)}</time><span>${readMin(p.body)} 分钟</span>${(p.tags||[]).map(t=>`<span>${suitHtml(t)} ${esc(t)}</span>`).join('')}</div>
+      </header><div class="checker" aria-hidden="true"></div>
+      <div class="prose">${md(p.body)}</div>
+      <p class="fin">~ fin ~</p>
+      <footer class="post-foot"><a class="back" href="#home">← All chapters</a>
+        ${ui.canWrite ? `<button class="btn" data-act="edit" data-id="${esc(p.id)}">编辑这一章</button>`:''}</footer>
+    </article>` + foot();
+  }
+
+  function about(){
+    if (ui.editAbout) return mast('about') + `<section class="editor">
+      <label class="label" for="ab-name">Blog name</label><input type="text" id="ab-name" value="${esc(state.site.name)}">
+      <label class="label" for="ab-tag">一句话介绍</label><input type="text" id="ab-tag" value="${esc(state.site.tagline)}">
+      <label class="label" for="ab-body">About（Markdown）</label><textarea id="ab-body" style="min-height:260px">${esc(state.site.about)}</textarea>
+      <div class="row"><button class="btn" data-act="about-cancel">取消</button><span class="spacer"></span><button class="btn primary" data-act="about-save" ${ui.busy?'disabled':''}>发布更改</button></div>
+    </section>`;
+    return mast('about') + `<header class="post-head"><div class="num">Who are you?</div><h1>关于我</h1></header><div class="checker" aria-hidden="true"></div><div class="prose">${md(state.site.about)}</div>
+      ${ui.canWrite ? `<div class="post-foot"><span></span><button class="btn" data-act="about-edit">编辑关于</button></div>`:''}` + foot();
+  }
+
+  function ghDefaults(){
+    const host=location.hostname, parts=location.pathname.split('/').filter(Boolean);
+    const isUser=/\.github\.io$/i.test(host); const owner=isUser?host.split('.')[0]:'';
+    let repo=host, path=location.pathname.replace(/^\//,'');
+    if (isUser && parts.length && !/\./.test(parts[0]) && !/\.github\.io$/i.test(parts[0])) {
+      // could be a project site (owner.github.io/repo/); user can fix in advanced fields
+    }
+    if (!path || path.endsWith('/')) path += 'index.html';
+    return {owner, repo, path, branch:'main'};
+  }
+  function adminPage(){
+    if (ui.mode!=='gh') return mast('') + `<p class="empty">在 Claude 里打开时，直接用右上角的「写文章」就行，不需要登录。</p>` + foot();
+    if (ui.canWrite) return mast('') + `<section class="gh-panel"><strong>你已经以作者身份登录</strong><p class="hint" style="margin:0">仓库 ${esc(ui.gh.owner)}/${esc(ui.gh.repo)} · 文件 ${esc(ui.gh.path)}</p><div class="row" style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn primary" href="#home">去写文章</a><button class="btn" data-act="gh-logout">退出登录</button></div></section>` + foot();
+    const d = Object.assign(ghDefaults(), ui.gh||{});
+    return mast('') + `<section class="gh-panel" aria-label="作者登录">
+      <strong style="font-size:18px">作者登录</strong>
+      <p class="hint" style="margin:0">登录后可以直接在这个网站上写文章、发布。只需要在这台设备上登录一次。</p>
+      <ol>
+        <li>打开 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a></li>
+        <li>Token name 随便填；Expiration 选你想要的时长</li>
+        <li>Repository access 选「Only select repositories」，只勾 ${esc(d.repo||'你的博客仓库')}</li>
+        <li>Permissions → Repository permissions → Contents 选「Read and write」</li>
+        <li>点「Generate token」，复制那串以 github_pat_ 开头的密钥，粘贴到下面</li>
+      </ol>
+      <label class="label" for="gh-token">GitHub 密钥（token）</label>
+      <input type="password" id="gh-token" autocomplete="off" placeholder="github_pat_…">
+      <details><summary>仓库设置（一般不用改）</summary><div class="grid2">
+        <input type="text" id="gh-owner" value="${esc(d.owner)}" aria-label="用户名" placeholder="用户名">
+        <input type="text" id="gh-repo" value="${esc(d.repo)}" aria-label="仓库名" placeholder="仓库名">
+        <input type="text" id="gh-path" value="${esc(d.path)}" aria-label="文件路径" placeholder="index.html">
+        <input type="text" id="gh-branch" value="${esc(d.branch)}" aria-label="分支" placeholder="main">
+      </div></details>
+      <div><button class="btn primary" data-act="gh-login" ${ui.busy?'disabled':''}>${ui.busy?'验证中…':'登录'}</button></div>
+      <p class="hint" style="margin:0">密钥只保存在这台设备的浏览器里，不会写进网站。别把它发给别人。</p>
+    </section>` + foot();
+  }
+
+  function editor(){
+    const e = ui.editing;
+    return mast('') + `<section class="editor" aria-label="编辑文章">
+      <input type="text" id="ed-title" placeholder="这一章的标题" value="${esc(e.title)}">
+      <div class="row">
+        <input type="text" id="ed-tags" placeholder="标签，用逗号分隔：旅行, 日常" value="${esc((e.tags||[]).join(', '))}" style="flex:2;min-width:180px">
+        <input type="text" id="ed-date" value="${esc(e.date)}" aria-label="日期" style="flex:1;min-width:120px;font-family:var(--f-mono)">
+      </div>
+      <div class="row"><div class="tabs" role="tablist">
+        <button role="tab" data-act="tab" data-v="0" aria-selected="${!ui.preview}">写作</button>
+        <button role="tab" data-act="tab" data-v="1" aria-selected="${ui.preview}">预览</button></div>
+        <span class="spacer"></span><label class="btn" for="ed-photo">插入照片</label><input type="file" id="ed-photo" class="photo-in" accept="image/*" multiple></div>
+      ${ui.preview ? `<div class="preview prose">${md(e.body)}</div>`
+        : `<textarea id="ed-body" placeholder="Begin at the beginning… 今天发生了什么？">${esc(e.body)}</textarea>`}
+      <div class="row">
+        <button class="btn" data-act="cancel">返回</button>
+        ${e.id && state.posts.some(p=>p.id===e.id) ? (ui.confirmDel
+          ? `<span class="confirm">确定删除这一章？<button class="btn danger" data-act="del-yes">删除</button><button class="btn" data-act="del-no">不删</button></span>`
+          : `<button class="btn danger" data-act="del">删除</button>`) : ''}
+        <span class="spacer"></span>
+        <button class="btn" data-act="draft-save">存草稿</button>
+        <button class="btn primary" data-act="publish" ${ui.busy?'disabled':''}>${ui.busy?'发布中…':'发布'}</button>
+      </div>
+      <p class="hint">发布后页面会更新成新版本，所有访客都会看到。草稿只存在这台设备的浏览器里。</p>
+    </section>`;
+  }
+
+  function render(){
+    const r = route();
+    if (ui.editing) app.innerHTML = editor();
+    else if (r.startsWith('p-')) app.innerHTML = article(r.slice(2));
+    else if (r==='about') app.innerHTML = about();
+    else if (r==='admin') app.innerHTML = adminPage();
+    else app.innerHTML = home();
+    document.title = state.site.name;
+    tickWatch();
+  }
+
+  const DK = 'blog-drafts-v1';
+  function loadDrafts(){ try { return JSON.parse(localStorage.getItem(DK)||'[]'); } catch(e){ return []; } }
+  function saveDrafts(d){ try { localStorage.setItem(DK, JSON.stringify(d)); return true; } catch(e){ return false; } }
+
+  function syncEditor(){
+    if (!ui.editing) return;
+    const g = id => document.getElementById(id);
+    if (g('ed-title')) ui.editing.title = g('ed-title').value;
+    if (g('ed-tags')) ui.editing.tags = g('ed-tags').value.split(/[,，]/).map(s=>s.trim()).filter(Boolean);
+    if (g('ed-date')) ui.editing.date = g('ed-date').value.trim();
+    if (g('ed-body')) ui.editing.body = g('ed-body').value;
+  }
+
+  function buildDoc(s){
+    const data = JSON.stringify(s).replace(/</g,'\\u003c');
+    const style = document.getElementById('blog-style').outerHTML;
+    const appJs = document.getElementById('blog-app').outerHTML;
+    const fonts = document.querySelector('link[href*="fonts.googleapis"]').outerHTML;
+    return SKEL_HEAD + `<title>${esc(s.site.name)}</title>\n${style}\n${fonts}\n<div id="app" class="wrap"></div>\n<div id="toast" class="toast" role="status" hidden></div>\n<script type="application/json" id="blog-data">${data}<\/script>\n${CDN}\n${appJs}` + SKEL_TAIL;
+  }
+
+  const GHK='blog-gh-v1';
+  function ghLoad(){ try { return JSON.parse(localStorage.getItem(GHK)||'null'); } catch(e){ return null; } }
+  function ghSave(v){ try { v ? localStorage.setItem(GHK, JSON.stringify(v)) : localStorage.removeItem(GHK); } catch(e){} }
+  const ghUrl = g => `https://api.github.com/repos/${encodeURIComponent(g.owner)}/${encodeURIComponent(g.repo)}`;
+  const ghHead = g => ({'Authorization':'Bearer '+g.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'});
+  function b64(str){ const u=new TextEncoder().encode(str); let bin=''; for(let i=0;i<u.length;i+=0x8000) bin+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000)); return btoa(bin); }
+  async function ghVerify(g){
+    const r = await fetch(ghUrl(g), {headers:ghHead(g)});
+    if (!r.ok) return r.status===404 ? 'repo' : 'token';
+    const j = await r.json(); return (j.permissions && j.permissions.push) ? 'ok' : 'perm';
+  }
+  async function ghPublish(next, okMsg){
+    const g=ui.gh; ui.busy=true; render();
+    try {
+      const fileUrl = ghUrl(g)+'/contents/'+g.path.split('/').map(encodeURIComponent).join('/');
+      let sha;
+      const cur = await fetch(fileUrl+'?ref='+encodeURIComponent(g.branch), {headers:ghHead(g), cache:'no-store'});
+      if (cur.ok) sha = (await cur.json()).sha; else if (cur.status!==404) throw {status:cur.status};
+      const body = {message:'Blog: '+okMsg+' · '+new Date().toISOString().slice(0,16).replace('T',' '), content:b64(buildDoc(next)), branch:g.branch};
+      if (sha) body.sha = sha;
+      const r = await fetch(fileUrl, {method:'PUT', headers:Object.assign({'Content-Type':'application/json'},ghHead(g)), body:JSON.stringify(body)});
+      if (!r.ok) throw {status:r.status};
+      Object.keys(state).forEach(k=>delete state[k]); Object.assign(state, next);
+      ui.busy=false; ui.editing=null; ui.editAbout=false; ui.confirmDel=false; render();
+      toast(okMsg+'。大约 1 分钟后所有人都能看到');
+      return true;
+    } catch(e){
+      ui.busy=false; render();
+      const st=e&&e.status;
+      toast(st===401||st===403 ? '密钥失效或没有写入权限，请重新登录' : st===409||st===422 ? '网站文件刚被改过，刷新页面后再发布' : st===404 ? '找不到仓库或文件，检查登录里的仓库设置' : '发布失败，检查网络后再试');
+      return false;
+    }
+  }
+
+  async function publish(next, okMsg){
+    if (ui.mode==='gh') return ghPublish(next, okMsg);
+    if (!ui.artifact) { toast('这个页面现在不能保存'); return false; }
+    ui.busy = true; render();
+    try { sessionStorage.setItem('blog-flash', okMsg); } catch(e){}
+    try { await ui.artifact.publish(buildDoc(next)); return true; }
+    catch(err){
+      ui.busy = false;
+      try { sessionStorage.removeItem('blog-flash'); } catch(e){}
+      const c = err && err.code;
+      if (c==='conflict') toast('页面刚被更新过，正在载入最新版本');
+      else if (c==='not_writer'||c==='not_granted'||c==='consent_required'||c==='not_declared'){ ui.canWrite=false; toast('你只有阅读权限'); }
+      else if (c==='rate_limited') toast('发布太频繁，稍等一会再试');
+      else toast('发布失败，请再试一次');
+      render(); return false;
+    }
+  }
+
+  function pruneImgs(posts, imgs){ const used={}; const all=posts.map(p=>p.body).join('\n'); for (const k in imgs) if (all.includes('img:'+k)) used[k]=imgs[k]; return used; }
+  function shrink(file){
+    return new Promise((res,rej)=>{
+      const url=URL.createObjectURL(file); const im=new Image();
+      im.onload=()=>{ const max=1400, r=Math.min(1, max/Math.max(im.naturalWidth,im.naturalHeight));
+        const c=document.createElement('canvas'); c.width=Math.round(im.naturalWidth*r); c.height=Math.round(im.naturalHeight*r);
+        c.getContext('2d').drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg',0.78)); };
+      im.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error('bad image')); };
+      im.src=url; });
+  }
+  app.addEventListener('change', async ev => {
+    if (ev.target.id!=='ed-photo' || !ui.editing) return;
+    const files=[...ev.target.files]; if(!files.length) return;
+    const ta=document.getElementById('ed-body'); syncEditor();
+    let ins='';
+    for (const f of files){
+      try { const d=await shrink(f); const k=Date.now().toString(36)+Math.random().toString(36).slice(2,5); ui.editing.images[k]=d; ins += `\n\n![](img:${k})\n*照片说明（可删）*\n\n`; }
+      catch(e){ toast('有一张照片读不出来，换一张试试'); }
+    }
+    if (ta){ const pos=ta.selectionStart ?? ta.value.length; ui.editing.body = ta.value.slice(0,pos)+ins+ta.value.slice(pos); }
+    else ui.editing.body += ins;
+    render(); toast('照片已插入');
+  });
+  const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+
+  app.addEventListener('click', async ev => {
+    const b = ev.target.closest('[data-act]'); if (!b) return;
+    const act = b.dataset.act;
+    if (act==='tag'){ ui.tag = b.dataset.tag || null; render(); }
+    else if (act==='new'){ ui.editing = {id:null,title:'',tags:[],date:today(),body:'',images:{},draftKey:'d'+Date.now()}; ui.preview=false; ui.confirmDel=false; render(); window.scrollTo(0,0); }
+    else if (act==='edit'){ const p=state.posts.find(x=>x.id===b.dataset.id); ui.editing={...p,tags:[...(p.tags||[])],images:{},draftKey:'e'+p.id}; ui.preview=false; ui.confirmDel=false; render(); window.scrollTo(0,0); }
+    else if (act==='draft'){ const d=loadDrafts().find(x=>x.key===b.dataset.id); if(d){ ui.editing={images:{},...d,draftKey:d.key}; ui.preview=false; render(); window.scrollTo(0,0);} }
+    else if (act==='tab'){ syncEditor(); ui.preview = b.dataset.v==='1'; render(); }
+    else if (act==='cancel'){ ui.editing=null; render(); }
+    else if (act==='del'){ syncEditor(); ui.confirmDel=true; render(); }
+    else if (act==='del-no'){ syncEditor(); ui.confirmDel=false; render(); }
+    else if (act==='del-yes'){
+      const id = ui.editing.id;
+      const left = state.posts.filter(p=>p.id!==id); const next = {...state, posts: left, images: pruneImgs(left, state.images||{})};
+      saveDrafts(loadDrafts().filter(d=>d.key!==ui.editing.draftKey));
+      location.hash='home';
+      await publish(next,'已删除');
+    }
+    else if (act==='draft-save'){
+      syncEditor(); const e=ui.editing;
+      const d = loadDrafts().filter(x=>x.key!==e.draftKey);
+      d.unshift({key:e.draftKey,id:e.id,title:e.title,tags:e.tags,date:e.date,body:e.body,images:e.images||{}});
+      toast(saveDrafts(d) ? '草稿已存在这台设备上' : '这个浏览器不允许存草稿');
+    }
+    else if (act==='publish'){
+      syncEditor(); const e=ui.editing;
+      if (!e.title.trim()){ toast('先写个标题'); return; }
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(e.date)){ toast('日期格式是 2026-09-29 这样'); return; }
+      const id = e.id || newId();
+      const post = {id,title:e.title.trim(),date:e.date,tags:e.tags,body:e.body};
+      const posts = state.posts.filter(p=>p.id!==id); posts.push(post);
+      const images = pruneImgs(posts, Object.assign({}, state.images||{}, e.images||{}));
+      saveDrafts(loadDrafts().filter(d=>d.key!==e.draftKey));
+      location.hash = 'p-'+id;
+      await publish({...state, posts, images}, '已发布');
+    }
+    else if (act==='gh-login'){
+      const v=id=>document.getElementById(id).value.trim();
+      const g={token:v('gh-token'), owner:v('gh-owner'), repo:v('gh-repo'), path:v('gh-path').replace(/^\//,'')||'index.html', branch:v('gh-branch')||'main'};
+      if (!g.token){ toast('先粘贴密钥'); return; }
+      if (!g.owner||!g.repo){ toast('展开「仓库设置」填上用户名和仓库名'); return; }
+      ui.busy=true; render();
+      let res='net'; try { res = await ghVerify(g); } catch(e){}
+      ui.busy=false;
+      if (res==='ok'){ ui.gh=g; ghSave(g); ui.canWrite=true; location.hash='home'; render(); toast('登录成功，可以写文章了'); }
+      else { render(); toast(res==='repo'?'找不到这个仓库，或者密钥没有勾选它':res==='perm'?'这个密钥没有写入权限，Contents 要选 Read and write':res==='token'?'密钥不对或已过期':'连不上 GitHub，检查网络'); }
+    }
+    else if (act==='gh-logout'){ ghSave(null); ui.gh=null; ui.canWrite=false; ui.editing=null; location.hash='home'; render(); toast('已退出'); }
+    else if (act==='about-edit'){ ui.editAbout=true; render(); }
+    else if (act==='about-cancel'){ ui.editAbout=false; render(); }
+    else if (act==='about-save'){
+      const v = id => document.getElementById(id).value;
+      const site = {name: v('ab-name').trim()||state.site.name, tagline: v('ab-tag').trim(), about: v('ab-body')};
+      await publish({...state, site}, '关于页已更新');
+    }
+    else if (act==='export'){
+      try { await ui.downloads.save({filename:'index.html', data: buildDoc(state)}); toast('已导出 index.html'); }
+      catch(err){ if (err && err.code!=='declined') toast('导出没成功'); }
+    }
+  });
+
+  window.addEventListener('hashchange', ()=>{ if(!ui.editing){ ui.editAbout=false; render(); window.scrollTo(0,0);} });
+  render();
+  try { const f=sessionStorage.getItem('blog-flash'); if(f){ sessionStorage.removeItem('blog-flash'); toast(f); } } catch(e){}
+
+  (async ()=>{
+    if (!window.claude || typeof window.claude.use!=='function') {
+      ui.mode='gh'; render();
+      const g=ghLoad(); if (!g) return;
+      ui.gh=g; let res='net'; try { res=await ghVerify(g); } catch(e){}
+      if (res==='ok'){ ui.canWrite=true; if(!ui.editing) render(); }
+      else if (res!=='net'){ ghSave(null); ui.gh=null; toast('作者登录已过期，请重新登录'); }
+      return;
+    }
+    ui.mode='claude';
+    try {
+      const [user, artifact, downloads] = await Promise.all([claude.use('user'), claude.use('artifact'), claude.use('downloads')]);
+      const can = user ? (await user.canEdit()) : false;
+      if (artifact && can){ ui.artifact=artifact; ui.downloads=downloads; ui.canWrite=true; if(!ui.editing) render(); }
+    } catch(e){}
+  })();
+})();
+</script>
